@@ -1,0 +1,19 @@
+import csv
+import pandas as pd
+import numpy as np
+
+
+Input = 'Border_Crossing_Entry_Data.csv'
+Output = 'Report.csv'
+data = pd.read_csv(Input)
+data.dropna(inplace=True)
+    
+data_new = data.groupby(["Border","Date","Measure"],as_index=False).agg({"Value":'sum'}).sort_values(['Date','Measure'],ascending=[False,True])
+
+data_avg = data_new.groupby(["Border","Measure"])["Value"].apply(lambda x:x.rolling(2).mean())
+avg=data_avg.iloc[::-1]
+
+data_new.insert(4,"Average",avg)
+print(data_new)
+
+#pd.DataFrame(data_new).to_csv(Output)
